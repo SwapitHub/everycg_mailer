@@ -88,7 +88,7 @@ class MailController extends Controller
     public function sent()
     {
         $draftCount = Email::where('is_draft', 1)->count();
-        $lists = Email::where('is_draft', 0)->get();
+        $lists = Email::orderBy('id','desc')->where('is_draft', 0)->get();
         return view('admin.mail.sent', compact('lists','draftCount'));
     }
 }

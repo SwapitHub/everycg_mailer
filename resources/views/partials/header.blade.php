@@ -175,14 +175,27 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="w-30px h-30px ms-1 rounded-circle" src="{{ asset('theme') }}/images/faces/face1.jpg"
-                        alt="profile">
+                    {{-- <img class="w-30px h-30px ms-1 rounded-circle" src="{{ asset('theme') }}/images/faces/face1.jpg"
+                        alt="profile"> --}}
+                    @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                        <img class="w-30px h-30px ms-1 rounded-circle" src="{{ Auth::user()->profile_photo_url }}"
+                            alt="profile">
+                    @else
+                        <img class="w-30px h-30px ms-1 rounded-circle" src="{{ Auth::user()->profile_photo_url }}"
+                            alt="profile">
+                    @endif
                 </a>
                 <div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
                     <div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
                         <div class="mb-3">
-                            <img class="w-80px h-80px rounded-circle"
+
+                            @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                                <img class="w-80px h-80px rounded-circle"
+                                    src="{{ Auth::user()->profile_photo_url }}" alt="profile">
+                            @else
+                                <img class="w-80px h-80px rounded-circle"
                                 src="{{ asset('theme') }}/images/faces/face1.jpg" alt="">
+                            @endif
                         </div>
                         <div class="text-center">
                             <p class="fs-16px fw-bolder">{{ Auth::user()->name }}</p>
