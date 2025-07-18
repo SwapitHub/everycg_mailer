@@ -169,4 +169,30 @@ class ContactController extends Controller
             ], 500);
         }
     }
+
+    public function getContactsByGroup($groupId)
+    {
+        $group = Group::with('contacts')->find($groupId);
+
+        if (!$group) {
+            $group = Group::with('contacts')->get();
+            return response()->json([
+                'contacts' => $group->contacts->map(function ($contact) {
+                    return [
+                        'name' => $contact->name,
+                        'email' => $contact->email
+                    ];
+                })
+            ]);
+        }
+
+        return response()->json([
+            'contacts' => $group->contacts->map(function ($contact) {
+                return [
+                    'name' => $contact->name,
+                    'email' => $contact->email
+                ];
+            })
+        ]);
+    }
 }

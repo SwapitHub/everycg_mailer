@@ -27,21 +27,6 @@
                                 </div>
                                 <div class="email-aside-nav collapse">
                                     <ul class="nav flex-column">
-                                        {{-- <li class="nav-item ">
-                                            <a class="nav-link d-flex align-items-center" href="{{ route('inbox') }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    data-lucide="inbox" class="lucide lucide-inbox icon-lg me-2">
-                                                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
-                                                    <path
-                                                        d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z">
-                                                    </path>
-                                                </svg>
-                                                Inbox
-                                                <span class="badge bg-danger fw-bolder ms-auto">2
-                                                </span></a>
-                                        </li> --}}
                                         <li class="nav-item">
                                             <a class="nav-link d-flex align-items-center" href="{{ route('sent') }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -68,8 +53,9 @@
                                                     <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
                                                 </svg>
                                                 Drafts
-                                                    @if ($draftCount)
-                                                    <span class="badge bg-secondary fw-bolder ms-auto">{{ $draftCount }}</span>
+                                                @if ($draftCount)
+                                                    <span class="badge bg-secondary fw-bolder ms-auto"
+                                                        id="draft-count">{{ $draftCount }}</span>
                                                 @endif
                                             </a>
                                         </li>
@@ -96,14 +82,13 @@
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="input-group">
-                                                <input class="form-control" type="text"
-                                                    placeholder="Search mail...">
+                                                <input class="form-control" type="text" placeholder="Search mail...">
                                                 <button class="btn btn-icon border bg-transparent" type="button"
                                                     id="button-search-addon"><svg xmlns="http://www.w3.org/2000/svg"
-                                                        width="24" height="24" viewBox="0 0 24 24"
-                                                        fill="none" stroke="currentColor" stroke-width="2"
-                                                        stroke-linecap="round" stroke-linejoin="round"
-                                                        data-lucide="search" class="lucide lucide-search">
+                                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round" data-lucide="search"
+                                                        class="lucide lucide-search">
                                                         <path d="m21 21-4.34-4.34"></path>
                                                         <circle cx="11" cy="11" r="8"></circle>
                                                     </svg></button>
@@ -118,19 +103,8 @@
                                             <input type="checkbox" class="form-check-input" id="inboxCheckAll">
                                         </div>
                                         <div class="btn-group me-2">
-                                            <button class="btn btn-outline-primary dropdown-toggle"
-                                                data-bs-toggle="dropdown" type="button"> With selected <span
-                                                    class="caret"></span></button>
-                                            <div class="dropdown-menu" role="menu">
-                                                <a class="dropdown-item" href="#">Mark as read</a>
-                                                <a class="dropdown-item" href="#">Mark as unread</a><a
-                                                    class="dropdown-item" href="#">Spam</a>
-                                                <div class="dropdown-divider"></div><a
-                                                    class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div>
-                                        <div class="btn-group me-2">
-                                            <button class="btn btn-outline-primary" type="button">Delete</button>
+                                            <button class="btn btn-outline-primary" type="button"
+                                                id="deleteDrafts">Delete</button>
                                         </div>
                                         <div class="btn-group me-2 d-none d-xl-block">
                                             <button class="btn btn-outline-primary dropdown-toggle"
@@ -169,13 +143,15 @@
 
                                     @foreach ($drafts as $draft)
                                         <!-- email list item -->
-                                        <div class="email-list-item">
+                                        <div class="email-list-item" id="draft-{{ $draft->id }}">
                                             <div class="email-list-actions">
                                                 <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input">
+                                                    <input type="checkbox" class="form-check-input draft-checkbox"
+                                                        id="draft-{{ $draft->id }}" data-id="{{ $draft->id }}">
                                                 </div>
                                             </div>
-                                            <a href="#" class="email-list-detail">
+                                            <a href="javascript:;" onclick="openDraft({{ $draft->id }})"
+                                                class="email-list-detail">
                                                 <div class="content">
                                                     <span class="from text-danger">Draft</span>
                                                     <p class="msg">{{ $draft->body }}</p>
@@ -210,4 +186,152 @@
         </div>
 
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="d-flex align-items-center p-3 border-bottom fs-16px">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" data-lucide="edit" class="lucide lucide-edit icon-md me-2">
+                            <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path
+                                d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z">
+                            </path>
+                        </svg>
+                        New message
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="btn-close"></button>
+                </div>
+                <form method="POST" novalidate="novalidate">
+                    <div class="modal-body">
+                        {{-- @php
+                            print_r($groups);
+                        @endphp --}}
+                        {{-- @csrf --}}
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <div class="m-3 mb-0">
+                            <div class="to">
+                                <div class="row mb-3">
+                                    <label class="col-md-2 col-form-label">Groups:</label>
+                                    <div class="col-md-10">
+                                        <select id="group_id" name="group_id" class="form-select ">
+                                            <option value="">Select</option>
+                                            @foreach ($groups as $group)
+                                                <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                            @endforeach
+                                        </select>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="to">
+                                <div class="row mb-3">
+                                    <label class="col-md-2 col-form-label">To:</label>
+                                    <div class="col-md-10">
+                                        <select id="to_email" name="to_email" class="form-select"
+                                            data-width="100%">
+                                            <option value="">Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="to cc">
+                                <div class="row mb-3">
+                                    <label class="col-md-2 col-form-label">Cc</label>
+                                    <div class="col-md-10">
+                                        <input type="email" name="cc_email" id="cc_email" class="form-control"
+                                            data-width="100%">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="subject">
+                                <div class="row mb-3">
+                                    <label class="col-md-2 col-form-label">Subject</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" type="text" name="subject"
+                                            value="{{ old('subject') }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mx-3">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label visually-hidden" for="msgBody">Descriptions
+                                    </label>
+                                    <textarea class="form-control" name="body" id="msgBody" rows="5" required>{{ old('body') }}</textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @push('scripts')
+        <script>
+            $("#js-single-select").select2();
+            window.deleteDraftUrl = "{{ route('email.remove', ['id' => '__ID__']) }}";
+
+            function openDraft(id) {
+                var actionUrl = "{{ route('drafts.edit', ['id' => ':id']) }}";
+                actionUrl = actionUrl.replace(':id', id);
+                $.ajax({
+                    url: actionUrl,
+                    type: 'GET',
+                    success: function(response) {
+                        $("#exampleModal").modal('show');
+                        console.log(response);
+                        // $('#group_id').val(response.group_id).trigger('change');
+                        $('#group_id').val(response.group_id);
+                        setGroups(response.group_id, response.to_email);
+                        $('#to_email').val(response.to_email);
+                        $('#cc_email').val(response.cc_email);
+                        $('input[name="subject"]').val(response.subject);
+                        $("#msgBody").val(response.body);
+                    },
+                    error: function() {
+                        alert('Failed to load email data');
+                    }
+                });
+            }
+
+            function setGroups(groupId, toemail) {
+                var actionUrl = "{{ route('contact.get', ['groupId' => ':groupId']) }}";
+                actionUrl = actionUrl.replace(':groupId', groupId);
+                $('#to_email').empty().append('<option value="">Loading...</option>');
+                if (groupId) {
+                    $.ajax({
+                        url: actionUrl,
+                        method: 'GET',
+                        success: function(data) {
+                            $('#to_email').empty().append('<option value="">Select</option>');
+
+                            $.each(data.contacts, function(key, contact) {
+                                $('#to_email').append($('<option></option>').val(contact.email).text(contact
+                                    .name + ' — ' + contact.email));
+                            });
+                            if (toemail) {
+                                $('#to_email').val(toemail);
+                            }
+                        },
+                        error: function() {
+                            $('#to_email').empty().append('<option value="">No contacts found</option>');
+                        }
+                    });
+                } else {
+                    $('#to_email').empty().append('<option value="">Select</option>');
+                }
+            }
+        </script>
+    @endpush
 </x-admin-layout>

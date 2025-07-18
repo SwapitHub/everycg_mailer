@@ -47,6 +47,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/contacts/edit/{id}', [ContactController::class, 'edit'])->name('contact.edit');
     Route::post('/contacts/edit/{id}', [ContactController::class, 'update'])->name('contact.update');
     Route::delete('/contacts/delete/{id}', [ContactController::class, 'destroy'])->name('contact.delete');
+    Route::get('/get-contacts-by-group/{groupId}', [ContactController::class, 'getContactsByGroup'])->name('contact.get');
+
 
     Route::get('/smtp', [SmtpController::class, 'index'])->name('smtp');
     Route::get('/smtp/edit/{id}', [SmtpController::class, 'edit'])->name('smtp.edit');
@@ -57,7 +59,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/email/compose', [MailController::class, 'send'])->name('send.email');
 
     Route::get('/email/drafts', [MailController::class, 'drafts'])->name('drafts');
+    Route::get('/email/edit/{id}', [MailController::class, 'edit'])->name('drafts.edit');
+    Route::post('/email/edit/{id}', [MailController::class, 'edit'])->name('drafts.update');
+    Route::delete('/email/delete/{id}', [MailController::class, 'removeEmail'])->name('email.remove');
     Route::get('/email/sent', [MailController::class, 'sent'])->name('sent');
-
-
+    Route::get('/email/sent', [MailController::class, 'sent'])->name('sent');
 });

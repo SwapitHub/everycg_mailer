@@ -2,32 +2,107 @@
 
 (function () {
 
-  // select2
-  if (document.querySelector(".compose-multiple-select")) {
-    $(".compose-multiple-select").select2();
-  }
+    // select2
+    if (document.querySelector(".compose-multiple-select")) {
+        $(".compose-multiple-select").select2();
+    }
 
-  // easymde editor
-  const easyMdeEditorEl = document.querySelector('#easyMdeEditor');
-  if (easyMdeEditorEl) {
-    var easymde = new EasyMDE({
-      element: easyMdeEditorEl
+    // easymde editor
+    const easyMdeEditorEl = document.querySelector('#easyMdeEditor');
+    if (easyMdeEditorEl) {
+        var easymde = new EasyMDE({
+            element: easyMdeEditorEl
+        });
+    }
+
+
+    let selectedIds = [];
+
+    const inboxCheckAll = document.querySelector('#inboxCheckAll');
+    const draftCheckboxes = document.querySelectorAll('.draft-checkbox');
+
+    // Select All / Deselect All
+    if (inboxCheckAll) {
+        inboxCheckAll.addEventListener('change', function () {
+            selectedIds = [];
+            draftCheckboxes.forEach(function (checkbox) {
+                checkbox.checked = inboxCheckAll.checked;
+
+                if (inboxCheckAll.checked) {
+                    const id = checkbox.dataset.id;
+                    selectedIds.push(id);
+                }
+            });
+
+            if (!inboxCheckAll.checked) {
+                selectedIds = [];
+            }
+
+            console.log("Select All IDs:", selectedIds);
+        });
+    }
+
+    // Individual selection
+    draftCheckboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            const id = this.dataset.id;
+
+            if (this.checked) {
+                if (!selectedIds.includes(id)) {
+                    selectedIds.push(id);
+                }
+            } else {
+                selectedIds = selectedIds.filter(i => i !== id);
+            }
+
+            // If any checkbox is unchecked, uncheck "Select All"
+            if (!this.checked && inboxCheckAll.checked) {
+                inboxCheckAll.checked = false;
+            }
+        });
     });
-  }
 
-  // Check/uncheck all email-list-item checkboxes on main checkbox click/change 
-  const inboxCheckAll = document.querySelector('#inboxCheckAll');
-  const inboxListItemChecks = document.querySelectorAll('.email-list-item .form-check-input');
-  if (inboxCheckAll) {
-    inboxCheckAll.addEventListener('change', function (event) {
-      inboxListItemChecks.forEach(function (checkItem) {
-        if (inboxCheckAll.checked === true) { 
-          checkItem.checked = true;
-        } else if (inboxCheckAll.checked === false) {
-          checkItem.checked = false;
+    // Delete selected drafts
+    document.querySelector("#deleteDrafts").addEventListener('click', function () {
+        if (selectedIds.length === 0) {
+            alert("Please select at least one draft to delete.");
+            return;
         }
-      });
+
+        const button = this;
+        button.disabled = true;
+        button.textContent = "Loading...";
+
+        selectedIds.forEach(function (id) {
+            const url = window.deleteDraftUrl.replace('__ID__', id);
+
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function () {
+                    const item = document.getElementById('draft-' + id);
+                    if (item) {
+                        item.closest('.email-list-item').remove();
+                    }
+                },
+                error: function () {
+                    alert("Failed to delete draft with ID: " + id);
+                },
+                complete: function () {
+                    // Reset button after last request finishes
+                    button.disabled = false;
+                    button.textContent = "Delete";
+                }
+            });
+        });
+
+        selectedIds = [];
+        inboxCheckAll.checked = false;
     });
-  }
+
+
 
 })();

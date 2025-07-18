@@ -15,9 +15,16 @@ use Exception;
 
 class MailController extends Controller
 {
+
+    protected $draftCount;
+    public function __construct()
+    {
+        $this->draftCount = Email::where('is_draft', 1)->count();
+    }
+
     public function index()
     {
-         $draftCount = Email::where('is_draft', 1)->count();
+        $draftCount =  $this->draftCount;
         return view('admin.mail.inbox', compact('draftCount'));
     }
 
@@ -25,15 +32,14 @@ class MailController extends Controller
     {
         $groups = Group::where('status', 1)->get();
         $contacts = Contact::where('status', 1)->get();
-        $draftCount = Email::where('is_draft', 1)->count();
-        return view('admin.mail.compose', compact('groups', 'contacts','draftCount'));
+        $draftCount =  $this->draftCount;
+        return view('admin.mail.compose', compact('groups', 'contacts', 'draftCount'));
     }
 
     public function send(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'to_email' => 'required',
-            'subject' => 'required',
             'body' => 'required',
         ]);
 
@@ -80,15 +86,33 @@ class MailController extends Controller
 
     public function drafts()
     {
-        $draftCount = Email::where('is_draft', 1)->count();
-        $drafts = Email::where('is_draft', 1)->get();
-        return view('admin.mail.drafts', compact('drafts','draftCount'));
+        $draftCount =  $this->draftCount;
+        $groups = Group::OrderBy('id','desc')->where('status',1)->get();
+        $drafts = Email::orderBy('id', 'desc')->where('is_draft', 1)->get();
+        return view('admin.mail.drafts', compact('drafts', 'draftCount','groups'));
     }
+
+    public function edit($id)
+    {
+        $email = Email::with('groups')->find($id);
+        return $email;
+    }
+
 
     public function sent()
     {
-        $draftCount = Email::where('is_draft', 1)->count();
-        $lists = Email::orderBy('id','desc')->where('is_draft', 0)->get();
-        return view('admin.mail.sent', compact('lists','draftCount'));
+        $draftCount =  $this->draftCount;
+        $lists = Email::orderBy('id', 'desc')->where('is_draft', 0)->get();
+        return view('admin.mail.sent', compact('lists', 'draftCount'));
+    }
+
+    public function removeEmail($id)
+    {
+        $email = Email::find($id);
+        $email->delete();
+        return response()->json([
+            'response' => true,
+            'message' => 'Email deleted.'
+        ], 200);
     }
 }

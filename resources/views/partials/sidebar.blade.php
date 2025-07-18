@@ -44,9 +44,9 @@
                         <li class="nav-item">
                             <a href="{{ route('smtp') }}" class="nav-link">SMTP</a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a href="{{ route('inbox') }}" class="nav-link">Inbox</a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item">
                             <a href="{{ route('drafts') }}" class="nav-link">Drafts</a>
                         </li>

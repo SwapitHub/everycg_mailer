@@ -106,6 +106,25 @@
             </div>
         </div>
     </div>
+
+
+
+
+
+    <div class="mb-3">
+        <label class="form-label">Single select box using select 2</label>
+        <select class="js-example-basic-single form-select" data-width="100%">
+            <option value="TX">Texas</option>
+            <option value="NY">New York</option>
+            <option value="FL">Florida</option>
+            <option value="KN">Kansas</option>
+            <option value="HW">Hawaii</option>
+        </select>
+    </div>
+
+
+
+
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -121,7 +140,7 @@
                         <div class="error-box"></div>
                         <div class="mb-3">
                             <label for="group_id" class="form-label">Group</label>
-                            <select class="form-select" name="group_id" id="group_id">
+                            <select class="js-example-basic-multiple" name="group_id" id="group_id" data-width="100%">
                                 <option selected="" disabled="">Select your group</option>
                                 @foreach ($groups as $group)
                                     <option value="{{ $group->id }}">{{ ucfirst($group->name) }}</option>
@@ -167,8 +186,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Upload file</label>
-                            <input id="contact-file" class="form-control text-capitalize" required name="contact-file"
-                                type="file"
+                            <input id="contact-file" class="form-control text-capitalize" required
+                                name="contact-file" type="file"
                                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                         </div>
                     </div>
@@ -183,7 +202,18 @@
     </div>
     @push('scripts')
         <script>
+            $(document).ready(function() {
+                $('.js-example-basic-single').select2();
+                // Initialize Select2 inside modal when modal is opened
+                $('#exampleModal').on('shown.bs.modal', function() {
+                    $('#group_id').select2({
+                        dropdownParent: $('#exampleModal')
+                    });
+                });
+            });
+
             function openGroupForm() {
+                $(".js-example-basic-multiple").select2();
                 var actionUrl = "{{ route('contact.create') }}";
                 $("#actionForm")[0].reset();
                 $("#exampleModalLabel").text('Add Contact');
