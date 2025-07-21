@@ -87,9 +87,50 @@ class MailController extends Controller
     public function drafts()
     {
         $draftCount =  $this->draftCount;
-        $groups = Group::OrderBy('id','desc')->where('status',1)->get();
-        $drafts = Email::orderBy('id', 'desc')->where('is_draft', 1)->get();
-        return view('admin.mail.drafts', compact('drafts', 'draftCount','groups'));
+        $groups = Group::OrderBy('id', 'desc')->where('status', 1)->get();
+        $drafts = Email::orderBy('id', 'desc')->where('is_draft', 1)->paginate(10);
+        return view('admin.mail.drafts', compact('drafts', 'draftCount', 'groups'));
+    }
+
+    public function draftSent(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'to_email' => 'required',
+            'body' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'response' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        $email = Email::find($id);
+        try {
+            $emailData = $request->all();
+            Mail::to($emailData['to_email'])->send(new SendEmail($emailData));
+            $returnMsg = 'Email sent!';
+            $status = 'Email sent!';
+        } catch (\Exception $e) {
+            $returnMsg = $e->getMessage();
+            $status = $e->getMessage();
+        }
+
+        $email->group_id = $request->group_id;
+        $email->from_email = env('MAIL_FROM_ADDRESS');
+        $email->to_email = trim($request->to_email);
+        $email->cc_email = $request->cc_email;
+        $email->subject = $request->subject;
+        $email->body = $request->body;
+        $email->is_draft = 0;
+        $email->status = $status;
+        $email->save();
+
+        return response()->json([
+            'response' => true,
+            'message' => $returnMsg
+        ], 200);
     }
 
     public function edit($id)
@@ -102,7 +143,7 @@ class MailController extends Controller
     public function sent()
     {
         $draftCount =  $this->draftCount;
-        $lists = Email::orderBy('id', 'desc')->where('is_draft', 0)->get();
+        $lists = Email::orderBy('updated_at', 'desc')->where('is_draft', 0)->paginate(10);
         return view('admin.mail.sent', compact('lists', 'draftCount'));
     }
 

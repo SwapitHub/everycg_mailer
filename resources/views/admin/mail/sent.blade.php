@@ -27,21 +27,6 @@
                                 </div>
                                 <div class="email-aside-nav collapse">
                                     <ul class="nav flex-column">
-                                        {{-- <li class="nav-item ">
-                                            <a class="nav-link d-flex align-items-center" href="{{ route('inbox') }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    data-lucide="inbox" class="lucide lucide-inbox icon-lg me-2">
-                                                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
-                                                    <path
-                                                        d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z">
-                                                    </path>
-                                                </svg>
-                                                Inbox
-                                                <span class="badge bg-danger fw-bolder ms-auto">2
-                                                </span></a>
-                                        </li> --}}
                                         <li class="nav-item active">
                                             <a class="nav-link d-flex align-items-center" href="{{ route('sent') }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -55,7 +40,6 @@
                                                 Sent Mail
                                             </a>
                                         </li>
-
                                         <li class="nav-item">
                                             <a class="nav-link d-flex align-items-center" href="{{ route('drafts') }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -69,9 +53,9 @@
                                                 </svg>
                                                 Drafts
                                                 @if ($draftCount)
-                                                    <span class="badge bg-secondary fw-bolder ms-auto">{{ $draftCount }}</span>
+                                                    <span
+                                                        class="badge bg-secondary fw-bolder ms-auto">{{ $draftCount }}</span>
                                                 @endif
-
                                             </a>
                                         </li>
                                     </ul>
@@ -92,7 +76,6 @@
                                                     </path>
                                                 </svg>
                                                 <h4 class="me-1">Sent</h4>
-                                                {{-- <span class="text-secondary">(2 new messages)</span> --}}
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -118,18 +101,6 @@
                                             <input type="checkbox" class="form-check-input" id="inboxCheckAll">
                                         </div>
                                         <div class="btn-group me-2">
-                                            <button class="btn btn-outline-primary dropdown-toggle"
-                                                data-bs-toggle="dropdown" type="button"> With selected <span
-                                                    class="caret"></span></button>
-                                            <div class="dropdown-menu" role="menu">
-                                                <a class="dropdown-item" href="#">Mark as read</a>
-                                                <a class="dropdown-item" href="#">Mark as unread</a><a
-                                                    class="dropdown-item" href="#">Spam</a>
-                                                <div class="dropdown-divider"></div><a
-                                                    class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div>
-                                        <div class="btn-group me-2">
                                             <button class="btn btn-outline-primary" type="button">Delete</button>
                                         </div>
                                         <div class="btn-group me-2 d-none d-xl-block">
@@ -138,32 +109,41 @@
                                                     class="caret"></span></button>
                                             <div class="dropdown-menu" role="menu">
                                                 <a class="dropdown-item" href="#">Date</a>
-                                                <a class="dropdown-item" href="#">From</a>
                                                 <a class="dropdown-item" href="#">Subject</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="#">Size</a>
+
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex align-items-center justify-content-end flex-grow-1">
-                                        <span class="me-2">1-10 of 253</span>
+                                    {{-- pagination using laravel like this  --}}
+                                    <div class="d-flex align-items-center justify-content-end flex-grow-1 mt-3">
+                                        <span class="me-2">
+                                            {{ $lists->firstItem() }}-{{ $lists->lastItem() }} of {{ $lists->total() }}
+                                        </span>
                                         <div class="btn-group">
-                                            <button class="btn btn-outline-secondary btn-icon" type="button"><svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            {{-- Previous Page --}}
+                                            <a href="{{ $lists->previousPageUrl() ?? '#' }}"
+                                                class="btn btn-outline-secondary btn-icon {{ $lists->onFirstPage() ? 'disabled' : '' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    data-lucide="chevron-left" class="lucide lucide-chevron-left">
+                                                    class="lucide lucide-chevron-left">
                                                     <path d="m15 18-6-6 6-6"></path>
-                                                </svg></button>
-                                            <button class="btn btn-outline-secondary btn-icon" type="button"><svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                </svg>
+                                            </a>
+
+                                            {{-- Next Page --}}
+                                            <a href="{{ $lists->nextPageUrl() ?? '#' }}"
+                                                class="btn btn-outline-secondary btn-icon {{ !$lists->hasMorePages() ? 'disabled' : '' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    data-lucide="chevron-right" class="lucide lucide-chevron-right">
+                                                    class="lucide lucide-chevron-right">
                                                     <path d="m9 18 6-6-6-6"></path>
-                                                </svg></button>
+                                                </svg>
+                                            </a>
                                         </div>
                                     </div>
+
                                 </div>
                                 <div class="email-list">
 

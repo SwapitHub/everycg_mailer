@@ -16,6 +16,14 @@
     }
 
 
+    const easyEditor = document.querySelector('.easyMdeEditor');
+    if (easyEditor) {
+        var easymde = new EasyMDE({
+            element: easyEditor
+        });
+    }
+
+
     let selectedIds = [];
 
     const inboxCheckAll = document.querySelector('#inboxCheckAll');

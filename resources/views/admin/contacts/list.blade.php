@@ -202,18 +202,10 @@
     </div>
     @push('scripts')
         <script>
-            $(document).ready(function() {
-                $('.js-example-basic-single').select2();
-                // Initialize Select2 inside modal when modal is opened
-                $('#exampleModal').on('shown.bs.modal', function() {
-                    $('#group_id').select2({
-                        dropdownParent: $('#exampleModal')
-                    });
-                });
-            });
-
             function openGroupForm() {
-                $(".js-example-basic-multiple").select2();
+                $('#group_id').select2({
+                    dropdownParent: $('#exampleModal')
+                });
                 var actionUrl = "{{ route('contact.create') }}";
                 $("#actionForm")[0].reset();
                 $("#exampleModalLabel").text('Add Contact');

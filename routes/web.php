@@ -32,9 +32,6 @@ Route::get('/send-test-mail', function () {
 });
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    // Route::get('/dashboard', function () {
-    //     return view('dashboard');
-    // })->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/groups', [GroupController::class, 'index'])->name('groups');
     Route::post('/groups', [GroupController::class, 'store'])->name('group.create');
@@ -59,9 +56,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/email/compose', [MailController::class, 'send'])->name('send.email');
 
     Route::get('/email/drafts', [MailController::class, 'drafts'])->name('drafts');
+    Route::post('/email/drafts/{id}', [MailController::class, 'draftSent'])->name('drafts.sent');
     Route::get('/email/edit/{id}', [MailController::class, 'edit'])->name('drafts.edit');
     Route::post('/email/edit/{id}', [MailController::class, 'edit'])->name('drafts.update');
     Route::delete('/email/delete/{id}', [MailController::class, 'removeEmail'])->name('email.remove');
-    Route::get('/email/sent', [MailController::class, 'sent'])->name('sent');
     Route::get('/email/sent', [MailController::class, 'sent'])->name('sent');
 });

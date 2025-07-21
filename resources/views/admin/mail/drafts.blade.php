@@ -112,32 +112,39 @@
                                                     class="caret"></span></button>
                                             <div class="dropdown-menu" role="menu">
                                                 <a class="dropdown-item" href="#">Date</a>
-                                                <a class="dropdown-item" href="#">From</a>
                                                 <a class="dropdown-item" href="#">Subject</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="#">Size</a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex align-items-center justify-content-end flex-grow-1">
-                                        <span class="me-2">1-10 of 253</span>
+                                    <div class="d-flex align-items-center justify-content-end flex-grow-1 mt-3">
+                                        <span class="me-2">
+                                            {{ $drafts->firstItem() }}-{{ $drafts->lastItem() }} of {{ $drafts->total() }}
+                                        </span>
                                         <div class="btn-group">
-                                            <button class="btn btn-outline-secondary btn-icon" type="button"><svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            {{-- Previous Page --}}
+                                            <a href="{{ $drafts->previousPageUrl() ?? '#' }}"
+                                                class="btn btn-outline-secondary btn-icon {{ $drafts->onFirstPage() ? 'disabled' : '' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    data-lucide="chevron-left" class="lucide lucide-chevron-left">
+                                                    class="lucide lucide-chevron-left">
                                                     <path d="m15 18-6-6 6-6"></path>
-                                                </svg></button>
-                                            <button class="btn btn-outline-secondary btn-icon" type="button"><svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                </svg>
+                                            </a>
+
+                                            {{-- Next Page --}}
+                                            <a href="{{ $drafts->nextPageUrl() ?? '#' }}"
+                                                class="btn btn-outline-secondary btn-icon {{ !$drafts->hasMorePages() ? 'disabled' : '' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    data-lucide="chevron-right" class="lucide lucide-chevron-right">
+                                                    class="lucide lucide-chevron-right">
                                                     <path d="m9 18 6-6-6-6"></path>
-                                                </svg></button>
+                                                </svg>
+                                            </a>
                                         </div>
                                     </div>
+
                                 </div>
                                 <div class="email-list">
 
@@ -147,7 +154,8 @@
                                             <div class="email-list-actions">
                                                 <div class="form-check">
                                                     <input type="checkbox" class="form-check-input draft-checkbox"
-                                                        id="draft-{{ $draft->id }}" data-id="{{ $draft->id }}">
+                                                        id="draft-{{ $draft->id }}"
+                                                        data-id="{{ $draft->id }}">
                                                 </div>
                                             </div>
                                             <a href="javascript:;" onclick="openDraft({{ $draft->id }})"
@@ -206,19 +214,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="btn-close"></button>
                 </div>
-                <form method="POST" novalidate="novalidate">
+                <form method="POST" novalidate="novalidate" id="draftFrom">
                     <div class="modal-body">
-                        {{-- @php
-                            print_r($groups);
-                        @endphp --}}
-                        {{-- @csrf --}}
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="m-3 mb-0">
                             <div class="to">
                                 <div class="row mb-3">
                                     <label class="col-md-2 col-form-label">Groups:</label>
                                     <div class="col-md-10">
-                                        <select id="group_id" name="group_id" class="form-select ">
+                                        <select id="group_id" name="group_id" class="form-select "
+                                            data-width="100%">
                                             <option value="">Select</option>
                                             @foreach ($groups as $group)
                                                 <option value="{{ $group->id }}">{{ $group->name }}</option>
@@ -263,7 +268,7 @@
                                 <div class="mb-3">
                                     <label class="form-label visually-hidden" for="msgBody">Descriptions
                                     </label>
-                                    <textarea class="form-control" name="body" id="msgBody" rows="5" required>{{ old('body') }}</textarea>
+                                    <textarea class="form-control" id="msgBody" name="body" rows="5" required>{{ old('body') }}</textarea>
                                 </div>
                             </div>
 
@@ -271,7 +276,8 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Send</button>
+                        <span id="responseMsg" style="margin-left: 10px; font-weight: bold;"></span>
+                        <button type="submit" class="btn btn-primary" id="sendBtn">Send</button>
                     </div>
                 </form>
             </div>
@@ -283,21 +289,41 @@
             window.deleteDraftUrl = "{{ route('email.remove', ['id' => '__ID__']) }}";
 
             function openDraft(id) {
+                $('#group_id').select2({
+                    dropdownParent: $('#exampleModal')
+                });
                 var actionUrl = "{{ route('drafts.edit', ['id' => ':id']) }}";
                 actionUrl = actionUrl.replace(':id', id);
                 $.ajax({
                     url: actionUrl,
                     type: 'GET',
                     success: function(response) {
+                        var draftId = response.id;
+                        var fromUrl = "{{ route('drafts.sent', ['id' => ':id']) }}";
+                        fromUrl = fromUrl.replace(':id', draftId);
+                        $("#draftFrom").attr('action', fromUrl)
                         $("#exampleModal").modal('show');
-                        console.log(response);
-                        // $('#group_id').val(response.group_id).trigger('change');
+                        //console.log(response);
                         $('#group_id').val(response.group_id);
                         setGroups(response.group_id, response.to_email);
                         $('#to_email').val(response.to_email);
                         $('#cc_email').val(response.cc_email);
                         $('input[name="subject"]').val(response.subject);
-                        $("#msgBody").val(response.body);
+                        const easyEditor = document.querySelector('#msgBody');
+                        if (easyEditor) {
+                            if (typeof easymde !== 'undefined') {
+                                easymde.toTextArea();
+                                easymde = null;
+                            }
+                            easymde = new EasyMDE({
+                                element: easyEditor,
+                                autofocus: true
+                            });
+                            easymde.value(response.body);
+                            setTimeout(() => {
+                                easymde.codemirror.refresh();
+                            }, 100);
+                        }
                     },
                     error: function() {
                         alert('Failed to load email data');
@@ -309,6 +335,9 @@
                 var actionUrl = "{{ route('contact.get', ['groupId' => ':groupId']) }}";
                 actionUrl = actionUrl.replace(':groupId', groupId);
                 $('#to_email').empty().append('<option value="">Loading...</option>');
+                $('#to_email').select2({
+                    dropdownParent: $('#exampleModal')
+                });
                 if (groupId) {
                     $.ajax({
                         url: actionUrl,
@@ -332,6 +361,44 @@
                     $('#to_email').empty().append('<option value="">Select</option>');
                 }
             }
+
+
+            $('#draftFrom').on('submit', function(e) {
+                e.preventDefault();
+                var action = $(document.activeElement).val();
+                var $button = $(document.activeElement);
+                // Disable button and show spinner
+                $button.prop('disabled', true);
+                $button.data('original-text', $button.html());
+                $button.html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                );
+                // Clear previous response
+                $('#responseMsg').text('');
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: $(this).serialize() + '&action=' + action,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        $('#responseMsg').text(response.message).css('color', 'green');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    },
+                    error: function(xhr) {
+                        let msg = xhr.responseJSON?.message || 'Something went wrong';
+                        $('#responseMsg').text(msg).css('color', 'red');
+                    },
+                    complete: function() {
+                        // Re-enable button and restore text
+                        $button.prop('disabled', false);
+                        $button.html($button.data('original-text'));
+                    }
+                });
+            });
         </script>
     @endpush
 </x-admin-layout>

@@ -51,7 +51,7 @@
                             <a href="{{ route('drafts') }}" class="nav-link">Drafts</a>
                         </li>
                         <li class="nav-item">
-                            <a href="" class="nav-link">Read</a>
+                            <a href="{{ route('sent') }}" class="nav-link">Sent</a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('compose') }}" class="nav-link">Compose</a>
