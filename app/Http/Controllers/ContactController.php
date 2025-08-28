@@ -78,7 +78,6 @@ class ContactController extends Controller
         return $contact;
     }
 
-
     /**
      * Update the specified resource in storage.
      *
