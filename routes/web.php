@@ -48,8 +48,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
 
     Route::get('/smtp', [SmtpController::class, 'index'])->name('smtp');
-    Route::get('/smtp/edit/{id}', [SmtpController::class, 'edit'])->name('smtp.edit');
-    Route::post('/smtp/edit/{id}', [SmtpController::class, 'update'])->name('smtp.update');
+    Route::post('/smtp', [SmtpController::class, 'update'])->name('smtp.update');
 
     Route::get('/email/inbox', [MailController::class, 'index'])->name('inbox');
     Route::get('/email/compose', [MailController::class, 'compose'])->name('compose');

@@ -15,6 +15,10 @@
         .set-btn-common input#search {
             padding-right: 30px;
         }
+
+        span#select2-group_id-container {
+            height: 35px !important;
+        }
     </style>
 
 
@@ -111,20 +115,11 @@
 
 
 
-    <div class="mb-3">
-        <label class="form-label">Single select box using select 2</label>
-        <select class="js-example-basic-single form-select" data-width="100%">
-            <option value="TX">Texas</option>
-            <option value="NY">New York</option>
-            <option value="FL">Florida</option>
-            <option value="KN">Kansas</option>
-            <option value="HW">Hawaii</option>
-        </select>
-    </div>
 
 
 
 
+    <!-- Modal -->
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -134,38 +129,41 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="btn-close"></button>
                 </div>
                 <form novalidate="novalidate" method="POST" id="actionForm" class="novalidate-form">
-
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="modal-body">
                         <div class="error-box"></div>
+
                         <div class="mb-3">
                             <label for="group_id" class="form-label">Group</label>
-                            <select class="js-example-basic-multiple" name="group_id" id="group_id" data-width="100%">
-                                <option selected="" disabled="">Select your group</option>
+                            <select class="js-example-basic-single" name="group_id" id="group_id" data-width="100%">
+                                <option disabled selected>Select your group</option>
                                 @foreach ($groups as $group)
                                     <option value="{{ $group->id }}">{{ ucfirst($group->name) }}</option>
                                 @endforeach
-
                             </select>
                         </div>
+
                         <div class="mb-3">
                             <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                             <input id="name" class="form-control text-capitalize" name="name" type="text">
                         </div>
+
                         <div class="mb-3">
-                            <label for="name" class="form-label">Email <span class="text-danger">*</span></label>
+                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                             <input id="email" class="form-control" name="email" type="email">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary submitBtn">Save changes <i data-lucide="loader"
-                                class="spin d-none"></i></button>
+                        <button type="submit" class="btn btn-primary submitBtn">
+                            Save changes <i data-lucide="loader" class="spin d-none"></i>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
     <!-- Modal -->
     <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalModalLabel"
         aria-hidden="true">
@@ -202,32 +200,36 @@
     </div>
     @push('scripts')
         <script>
-            function openGroupForm() {
+            $(document).ready(function() {
+                // ✅ initialize once with modal as parent
                 $('#group_id').select2({
                     dropdownParent: $('#exampleModal')
                 });
-                var actionUrl = "{{ route('contact.create') }}";
+            });
+
+            function openGroupForm() {
                 $("#actionForm")[0].reset();
+                $('#group_id').val(null).trigger('change'); // reset select2
+                var actionUrl = "{{ route('contact.create') }}";
                 $("#exampleModalLabel").text('Add Contact');
                 $("#actionForm").attr('action', actionUrl);
                 $("#exampleModal").modal('show');
             }
 
             function editGroup(id) {
-                var editUrl = "{{ route('contact.edit', ['id' => ':id']) }}";
-                editUrl = editUrl.replace(':id', id);
+                var editUrl = "{{ route('contact.edit', ['id' => ':id']) }}".replace(':id', id);
 
                 $.ajax({
                     url: editUrl,
                     method: "GET",
                     success: function(xhr) {
-                        console.log(xhr.name);
-                        var actionUrl = "{{ route('contact.update', ['id' => ':id']) }}";
-                        actionUrl = actionUrl.replace(':id', id);
+                        var actionUrl = "{{ route('contact.update', ['id' => ':id']) }}".replace(':id', id);
                         $("#actionForm").attr('action', actionUrl);
                         $("#exampleModalLabel").text('Edit Contact');
                         $("#exampleModal").modal('show');
-                        $('#group_id').val(xhr.group_id);
+
+                        // ✅ set select2 properly
+                        $('#group_id').val(xhr.group_id).trigger('change');
                         $("#name").val(xhr.name);
                         $("#email").val(xhr.email);
                     }
@@ -235,5 +237,6 @@
             }
         </script>
     @endpush
+
 
 </x-admin-layout>
