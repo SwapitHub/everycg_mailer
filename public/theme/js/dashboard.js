@@ -2,7 +2,7 @@
 
 (function() {
 
-  // JS global variables from app.js file 
+  // JS global variables from app.js file
   const colors = window.config.colors;
   const fontFamily = window.config.fontFamily;
 
@@ -423,10 +423,10 @@
           enabled: false
         },
       },
-      colors: [colors.primary],  
+      colors: [colors.primary],
       fill: {
         opacity: .9
-      } , 
+      } ,
       grid: {
         padding: {
           bottom: -4
@@ -493,7 +493,7 @@
         },
       },
     }
-    
+
     const monthlySalesChart = new ApexCharts(monthlySalesChartElement, monthlySalesChartOptions);
     monthlySalesChart.render();
   }
@@ -524,7 +524,7 @@
             background: colors.gridBorder,
             strokeWidth: '100%',
             opacity: 1,
-            margin: 5, 
+            margin: 5,
           },
           dataLabels: {
             showOn: "always",
@@ -550,9 +550,9 @@
       },
       labels: ["Storage Used"]
     };
-    
+
     const storageChart = new ApexCharts(storageChartElement, storageChartOptions);
-    storageChart.render();    
+    storageChart.render();
   }
   // Cloud Storage Chart - END
 
