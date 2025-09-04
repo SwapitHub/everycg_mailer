@@ -51,7 +51,7 @@
                                 <div class="d-flex justify-content-between align-items-baseline">
                                     <h6 class="card-title mb-0">New Contacts</h6>
                                 </div>
-                                <a hre="{{ route('contacts') }}">
+                                <a href="{{ route('contacts') }}">
                                     <div class="row">
                                         <div class="col-6 col-md-12 col-xl-5">
                                             <h3 class="mb-2">{{ $contactCount }}</h3>
