@@ -1,4 +1,24 @@
 <x-admin-layout>
+     <style>
+        .card-contact-set {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .set-btn-common {
+            display: flex;
+            gap: 10px;
+        }
+
+        .set-btn-common input#search {
+            padding-right: 30px;
+        }
+
+        span#select2-group_id-container {
+            height: 35px !important;
+        }
+    </style>
     <div class="page-content container-xxl">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -10,10 +30,22 @@
             <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">
-                            <button class="btn btn-primary" onclick="openGroupForm()">Add
+
+                        <div class="card-contact-set">
+                            <div class="set-btn-common">
+                                <button class="btn btn-primary" onclick="openGroupForm()">Add
                                 group</button>
-                        </h6>
+                            </div>
+                            <form method="GET">
+                                <div class="set-btn-common btn-set-custom">
+                                    <input id="search" class="form-control text-capitalize" name="filter"
+                                        type="search" placeholder="Search by name"
+                                        value="{{ request('filter') }}">
+                                    <button class="btn btn-primary ">Search</button>
+                                    <button class="btn btn-secondary" type="reset">Reset</button>
+                                </div>
+                            </form>
+                        </div>
                         <div class="table-responsive pt-3">
                             <table class="table table-bordered">
                                 <thead>

@@ -13,9 +13,17 @@ class GroupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $list = Group::orderBy('id', 'desc')->paginate(10);
+        $query = Group::orderBy('id', 'desc');
+        if ($request->filled('filter')) {
+            $filter = $request->input('filter');
+
+            $query->where(function ($q) use ($filter) {
+                $q->where('name', 'like', "%{$filter}%");
+            });
+        }
+        $list = $query->paginate(10);
         return view('admin.groups.list', ['lists' => $list]);
     }
 
