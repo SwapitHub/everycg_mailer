@@ -94,7 +94,18 @@
                     const item = document.getElementById('draft-' + id);
                     if (item) {
                         item.closest('.email-list-item').remove();
+                        // remove deleted count from selectedIds
                     }
+                    // Update count
+                    const countElement = document.getElementById('draft-count');
+                    if (countElement) {
+                        let currentCount = parseInt(countElement.textContent);
+                        if (!isNaN(currentCount) && currentCount > 0) {
+                            countElement.textContent = currentCount - 1;
+                        }
+                    }
+                    // Remove deleted ID from selectedIds
+                    selectedIds = selectedIds.filter(did => did !== id);
                 },
                 error: function () {
                     alert("Failed to delete draft with ID: " + id);
@@ -110,6 +121,7 @@
         selectedIds = [];
         inboxCheckAll.checked = false;
     });
+
 
 
 

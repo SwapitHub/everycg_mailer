@@ -78,6 +78,9 @@
                                                     @if ($draftCount)
                                                         <span class="badge bg-secondary fw-bolder ms-auto"
                                                             id="draft-count">{{ $draftCount }}</span>
+                                                    @else
+                                                        <span class="badge bg-secondary fw-bolder ms-auto"
+                                                            id="draft-count">0</span>
                                                     @endif
                                                 </a>
                                             </li>

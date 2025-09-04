@@ -101,7 +101,8 @@
                                             <input type="checkbox" class="form-check-input" id="inboxCheckAll">
                                         </div>
                                         <div class="btn-group me-2">
-                                            <button class="btn btn-outline-primary" type="button">Delete</button>
+                                            <button class="btn btn-outline-primary" id="deleteDrafts"
+                                                type="button">Delete</button>
                                         </div>
                                         <div class="btn-group me-2 d-none d-xl-block">
                                             <button class="btn btn-outline-primary dropdown-toggle"
@@ -149,10 +150,13 @@
 
                                     @foreach ($lists as $list)
                                         <!-- email list item -->
-                                        <div class="email-list-item">
+                                        <div class="email-list-item" id="draft-{{ $list->id }}">
                                             <div class="email-list-actions">
                                                 <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input">
+                                                    {{-- <input type="checkbox" class="form-check-input"> --}}
+                                                    <input type="checkbox" class="form-check-input draft-checkbox"
+                                                        id="draft-{{ $list->id }}"
+                                                        data-id="{{ $list->id }}">
                                                 </div>
                                             </div>
                                             <a href="#" class="email-list-detail">
@@ -190,4 +194,9 @@
         </div>
 
     </div>
+    @push('scripts')
+        <script>
+             window.deleteDraftUrl = "{{ route('email.remove', ['id' => '__ID__']) }}";
+        </script>
+    @endpush
 </x-admin-layout>
