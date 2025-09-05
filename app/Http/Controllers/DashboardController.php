@@ -22,43 +22,6 @@ class DashboardController extends Controller
     }
 
 
-    // public function index()
-    // {
-    //     $groupCount  =  $this->groups;
-    //     $contactCount  =  $this->contacts;
-    //     $draftCount = $this->drafts;
-
-
-    //     // Current 7 days
-    //     $currentGroups = Group::where('created_at', '>=', now()->subDays(7))->count();
-
-    //     // Previous 7 days
-    //     $previousGroups = Group::whereBetween('created_at', [now()->subDays(14), now()->subDays(7)])->count();
-
-    //     // Calculate percentage change
-    //     if ($previousGroups > 0) {
-    //         $groupGrowth = (($currentGroups - $previousGroups) / $previousGroups) * 100;
-    //     } else {
-    //         $groupGrowth = $currentGroups > 0 ? 100 : 0;
-    //     }
-
-    //     // Example: Get daily created groups for last 7 days
-    //     $groupsChart = Group::selectRaw('DATE(created_at) as date, COUNT(*) as total')
-    //         ->where('created_at', '>=', now()->subDays(7))
-    //         ->groupBy('date')
-    //         ->orderBy('date', 'ASC')
-    //         ->get();
-
-    //     // Format for ApexCharts
-    //     $chartData = [
-    //         'dates' => $groupsChart->pluck('date')->map(fn($d) => \Carbon\Carbon::parse($d)->format('M d Y')),
-    //         'totals' => $groupsChart->pluck('total'),
-    //     ];
-
-    //     // return view('dashboard', compact('groupCount', 'contactCount', 'draftCount'));
-    //     return view('dashboard', compact('groupCount', 'contactCount', 'draftCount', 'chartData', 'groupGrowth'));
-    // }
-
     public function index()
     {
         $groupCount  = $this->groups;

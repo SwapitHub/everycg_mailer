@@ -26,7 +26,7 @@
                         alt="profile"> --}}
                     @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                         <img class="w-30px h-30px ms-1 rounded-circle" src="{{ Auth::user()->profile_photo_url }}"
-                            alt="profile">
+                            alt="{{ Auth::user()->profile_photo_url }}">
                     @else
                         <img class="w-30px h-30px ms-1 rounded-circle" src="{{ Auth::user()->profile_photo_url }}"
                             alt="profile">
