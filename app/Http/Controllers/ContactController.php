@@ -34,7 +34,7 @@ class ContactController extends Controller
         }
 
         $lists = $query->paginate(10);
-        $groups = Group::orderBy('id', 'desc')->where('status',1)->get();
+        $groups = Group::orderBy('id', 'desc')->where('status', 1)->get();
 
         return view('admin.contacts.list', compact('lists', 'groups'));
     }
@@ -51,6 +51,13 @@ class ContactController extends Controller
             'group_id' => 'required|integer',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:contacts,email',
+        ],
+        [
+            'group_id.required' => 'Please select a group.',
+            'name.required' => 'Please enter contact name.',
+            'email.required' => 'Please enter contact email.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email address is already associated with another contact.',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -146,9 +153,18 @@ class ContactController extends Controller
 
     public function importContacts(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'contact-file' => 'required|file|mimes:xls,xlsx,csv|max:100000',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'contact-file' => 'required|file|mimes:xls,xlsx,csv|max:100000',
+            ],
+            [
+                'contact-file.required' => 'Please upload a contact file.',
+                'contact-file.file'     => 'The uploaded file must be a valid file.',
+                'contact-file.mimes'    => 'Only Excel or CSV files are allowed (.xls, .xlsx, .csv).',
+                'contact-file.max'      => 'The file size must not exceed 100 MB.',
+            ]
+        );
 
         if ($validator->fails()) {
             return response()->json([

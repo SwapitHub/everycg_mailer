@@ -139,8 +139,8 @@
                         <div class="error-box"></div>
 
                         <div class="mb-3">
-                            <label for="group_id" class="form-label">Group</label>
-                            <select class="js-example-basic-single" name="group_id" id="group_id" data-width="100%">
+                            <label for="group_id" class="form-label">Group <span class="text-danger">*</span></label>
+                            <select class="js-example-basic-single" name="group_id" id="group_id" data-width="100%" required>
                                 <option disabled selected>Select your group</option>
                                 @foreach ($groups as $group)
                                     <option value="{{ $group->id }}">{{ ucfirst($group->name) }}</option>
@@ -188,7 +188,7 @@
 
                         </div>
                         <div class="mb-3">
-                            <label for="name" class="form-label">Upload file</label>
+                            <label for="name" class="form-label">Upload file <span class="text-danger">*</span></label>
                             <input id="contact-file" class="form-control text-capitalize" required
                                 name="contact-file" type="file"
                                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
