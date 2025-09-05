@@ -34,7 +34,7 @@ class ContactController extends Controller
         }
 
         $lists = $query->paginate(10);
-        $groups = Group::orderBy('id', 'desc')->get();
+        $groups = Group::orderBy('id', 'desc')->where('status',1)->get();
 
         return view('admin.contacts.list', compact('lists', 'groups'));
     }

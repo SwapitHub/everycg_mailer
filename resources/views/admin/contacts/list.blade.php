@@ -65,6 +65,7 @@
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Group name</th>
+                                        {{-- <th>Status</th> --}}
                                         <th>Created at</th>
                                         <th>Updated at</th>
                                         <th>Options</th>
@@ -80,6 +81,10 @@
                                             <td>{{ ucfirst($list->name) }}</td>
                                             <td>{{ $list->email }}</td>
                                             <td>{{ $list->group->name }}</td>
+                                            {{-- <td>
+                                                <span
+                                                    class="badge bg-{{ $list->status == 1 ? 'success' : 'danger' }}">{{ $list->status == 1 ? 'Active' : 'Inactive' }}</span>
+                                            </td> --}}
                                             <td>{{ $list->created_at }}</td>
                                             <td>{{ $list->updated_at }}</td>
                                             <td>
